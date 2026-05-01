@@ -1,4 +1,5 @@
 Wireless Indoor Localization
+
 Bu proje, GPS sinyallerinin yetersiz kaldığı kapalı alanlarda, ortamdaki Wi-Fi yönlendiricilerinden gelen sinyal güçlerini kullanarak bir cihazın hangi odada bulunduğunu yüksek doğrulukla tahmin eden bir makine öğrenmesi sistemidir.  
 
 🛠️ Teknik Özellikler ve Metodoloji
