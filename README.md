@@ -1,31 +1,37 @@
-Wireless Indoor Localization
+> **Not:** Bu proje, 2026 yılı bahar döneminde Gazi Üniversitesi BMT-218 Veri Bilimine Giriş dersi kapsamında geliştirilmiştir.
 
-Bu proje, GPS sinyallerinin yetersiz kaldığı kapalı alanlarda, ortamdaki Wi-Fi yönlendiricilerinden gelen sinyal güçlerini kullanarak bir cihazın hangi odada bulunduğunu yüksek doğrulukla tahmin eden bir makine öğrenmesi sistemidir.  
+# Wireless Indoor Localization
 
-🛠️ Teknik Özellikler ve Metodoloji
+![Status](https://img.shields.io/badge/Status-Completed-success.svg) ![Language](https://img.shields.io/badge/Language-Python-blue.svg) ![Library](https://img.shields.io/badge/Library-Scikit--Learn-orange.svg) ![Environment](https://img.shields.io/badge/Environment-Jupyter-F37626.svg)
 
-Veri Sızıntısı (Data Leakage) Koruması: StandardScaler ve modeller bir Pipeline mimarisi içinde birleştirilmiştir. Bu sayede ölçeklendirme işlemi sadece eğitim setinden öğrenilir; test verisinin istatistiklerinin eğitim aşamasına sızması engellenerek metodolojik dürüstlük sağlanır.
+Bu proje, GPS sinyallerinin yetersiz kaldığı kapalı alanlarda, ortamdaki Wi-Fi yönlendiricilerinden (router) gelen sinyal güçlerini kullanarak bir cihazın hangi odada bulunduğunu yüksek doğrulukla tahmin eden bir makine öğrenmesi sistemidir.
 
-Çok Boyutlu Analiz (t-SNE): 7 farklı router'dan gelen sinyallerin (7 boyut) 2 boyuta indirgenmesiyle, odaların sinyal uzayındaki fiziksel kümelenmesi görselleştirilmiştir.
+## Teknik Özellikler ve Metodoloji
 
-Adil Model Yarıştırma: KNN, Random Forest, SVM, Decision Tree ve Logistic Regression modelleri, 5-katlı Çapraz Doğrulama (5-Fold CV) ile tarafsız bir şekilde kıyaslanmıştır.
+- **Veri Sızıntısı (Data Leakage) Koruması:** StandardScaler ve makine öğrenmesi modelleri bir Pipeline mimarisi içinde birleştirilmiştir. Ölçeklendirme işlemi sadece eğitim setinden öğrenilerek test verisinin istatistiklerinin eğitim aşamasına sızması engellenmiştir.
+- **Çok Boyutlu Analiz (t-SNE):** 7 farklı yönlendiriciden gelen sinyallerin (7 boyut) aralarındaki fiziksel mesafe korunarak 2 boyuta indirgenmesiyle, odaların sinyal uzayındaki kümelenmesi görselleştirilmiştir.
+- **Adil Model Yarıştırma:** KNN, Random Forest, SVM, Decision Tree ve Logistic Regression modelleri, 5-katlı Çapraz Doğrulama (5-Fold CV) kullanılarak genel doğruluk (Accuracy) ve çok boyutlu metrikler (Precision, Recall, F1-Score) üzerinden karşılaştırılmıştır.
+- **Dinamik Hiperparametre Optimizasyonu:** Çapraz doğrulama sonucunda lider çıkan algoritmanın (Random Forest) iç parametre kombinasyonları (ağaç derinliği, tahminci sayısı vb.) GridSearchCV ile test edilerek optimize edilmiştir.
+- **Özellik Önemi (Feature Importance):** Ağaç tabanlı modelin Gini Impurity (Safsızlık Azalması) skoru kullanılarak, yönlendiricilerin önem dereceleri sıralanmış ve sisteme en çok bilgi sağlayan cihazlar tespit edilmiştir.
 
-Dinamik Hiperparametre Optimizasyonu: Çapraz doğrulama sonucunda lider çıkan model otomatik olarak seçilir ve GridSearchCV ile tavan performansına ulaştırılır.
+## Veri Seti Yapısı
 
-📊 Veri Seti Yapısı
-Kullanılan veri seti 7 adet Wi-Fi yönlendiricisi sinyali ve 1 adet hedef oda numarasından oluşur:  
+Veri seti, kapalı alandaki cihazlardan alınan ölçümlere dayanmaktadır:
+- **Özellikler (Features):** Router1, Router2, Router3, Router4, Router5, Router6, Router7 (Sinyal Gücü - dBm)
+- **Hedef Değişken (Target):** Room (Oda numarası: 1, 2, 3, 4)
 
-Özellikler (Features): Router1, Router2, Router3, Router4, Router5, Router6, Router7 (Sinyal Gücü - dBm)  
+## Proje Akışı
 
-Hedef (Target): Room (1, 2, 3, 4)  
+1. **Keşifsel Veri Analizi (EDA) ve Gürültü Kontrolü:** Sınıf dengesi ve sinyallerdeki aykırı (outlier) değerlerin tespiti.
+2. **Boyut İndirgeme:** t-SNE algoritması ile veri ayrılabilirliğinin kanıtlanması.
+3. **Model Değerlendirme:** Farklı algoritmaların Pipeline mimarisi üzerinden çapraz doğrulama ile test edilmesi.
+4. **Hiperparametre Ayarı:** Seçilen lider modelin GridSearchCV ile optimize edilmesi.
+5. **Nihai Test ve Hata Analizi:** Ayrılan bağımsız test seti üzerinde modelin çalıştırılması, Karmaşıklık Matrisi (Confusion Matrix) ve detaylı sınıflandırma raporunun oluşturulması.
 
-📋 Proje Akışı
-Keşifsel Veri Analizi (EDA): Sınıf dengesi ve sinyallerdeki anomali (outlier) tespiti.
+## Kullanılan Teknolojiler
 
-Boyut İndirgeme: t-SNE algoritması ile verinin ayrılabilirliğinin kanıtlanması.
-
-Model Değerlendirme: Farklı algoritmaların Pipeline üzerinden tarafsız testi.
-
-Hiperparametre Ayarı: En iyi modelin (örneğin KNN veya Random Forest) iç parametrelerinin optimize edilmesi.
-
-Performans Raporlama: Karmaşıklık Matrisi (Confusion Matrix) ve detaylı sınıflandırma raporu (Precision, Recall, F1) ile hata analizi.
+- **Dil:** Python 3
+- **Veri Manipülasyonu:** Pandas, NumPy
+- **Makine Öğrenmesi:** Scikit-Learn
+- **Görselleştirme:** Matplotlib, Seaborn
+- **Ortam:** Jupyter Notebook
